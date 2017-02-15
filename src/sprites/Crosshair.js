@@ -12,16 +12,16 @@ export default class extends Phaser.Sprite {
     this.body.velocity.y = 0;
 
     if (cursors.left.isDown){
-      this.body.velocity.x = -150;
+      this.body.velocity.x = -300;
     }
     else if (cursors.right.isDown) {
-      this.body.velocity.x = 150;
+      this.body.velocity.x = 300;
     }
     else if (cursors.up.isDown) {
-      this.body.velocity.y = -150;
+      this.body.velocity.y = -300;
     }
     else if (cursors.down.isDown) {
-      this.body.velocity.y = 150;
+      this.body.velocity.y = 300;
     }
   }
 
