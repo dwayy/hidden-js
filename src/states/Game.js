@@ -48,7 +48,7 @@ export default class extends Phaser.State {
     this.cursors = this.input.keyboard.createCursorKeys()
 
     let space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
-    space.onDown.add(this.death, this)
+    space.onDown.add(this.fire, this)
 
     this.walk = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
     this.run = this.game.input.keyboard.addKey(Phaser.Keyboard.Z)
@@ -67,21 +67,23 @@ export default class extends Phaser.State {
     this.crosshair.move(this.cursors)
   }
 
-  death() {
-    let x = this.character.body.x, y = this.character.body.y
+  fire() {
+    this.characters.forEach(character => {
+      let x = character.body.x, y = character.body.y
 
-    if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
-      this.character.kill()
-      this.blood = new Death({
-        game: this.game,
-        x: x,
-        y: y,
-        asset: 'death'
-      })
-      this.game.add.existing(this.blood)
-      this.blood.animations.play('death')
-    }
+      if (character.alive && Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
+        character.kill()
+        let blood = new Death({
+          game: this.game,
+          x: x,
+          y: y,
+          asset: 'death'
+        })
+        this.game.add.existing(blood)
+        blood.animations.play('death').killOnComplete = true
+      }
 
+    })
   }
 
   render () {
