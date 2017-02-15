@@ -9,12 +9,16 @@ export default class extends Phaser.State {
   preload () {}
 
   create () {
-    this.character = new Character({
-      game: this.game,
-      x: this.world.centerX + 16 - this.world.width / 2,
-      y: this.world.centerY,
-      asset: 'hero'
+    this.characters = Array(10).fill().map((_, i) => {
+      return new Character({
+        game: this.game,
+        x: this.world.centerX + 16 - this.world.width / 2,
+        y: this.world.centerY - this.world.height / 2 + 36 * (i + 1),
+        asset: 'hero'
+      })
     })
+
+    this.character = this.characters[Math.floor(Math.random() * 10)]
 
     this.crosshair = new Crosshair({
       game: this.game,
@@ -25,6 +29,12 @@ export default class extends Phaser.State {
 
     let charactersGroup = this.game.add.group()
     let crosshairsGroup = this.game.add.group()
+
+    this.characters.forEach(c => {
+      this.game.add.existing(c)
+      this.game.physics.arcade.enable(c)
+      charactersGroup.add(c)
+    })
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
     this.game.add.existing(this.character)
