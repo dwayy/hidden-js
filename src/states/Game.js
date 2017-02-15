@@ -28,33 +28,7 @@ export default class extends Phaser.State {
 
   update() {
     if(this.hero.alive) {
-      this.hero.body.velocity.x = 0;
-      this.hero.body.velocity.y = 0;
-
-      if (this.cursors.left.isDown){
-        this.hero.body.velocity.x = -150;
-        this.hero.animations.play('left');
-        this.frame = 16;
-      }
-      else if (this.cursors.right.isDown) {
-        this.hero.body.velocity.x = 150;
-        this.hero.animations.play('right');
-        this.frame = 24;
-      }
-      else if (this.cursors.up.isDown) {
-        this.hero.body.velocity.y = -150;
-        this.hero.animations.play('up');
-        this.frame = 8;
-      }
-      else if (this.cursors.down.isDown) {
-        this.hero.body.velocity.y = 150;
-        this.hero.animations.play('down');
-        this.frame = 0;
-      }
-      else {
-        this.hero.animations.stop();
-        this.hero.frame = this.frame;
-      }
+      this.hero.move(this.cursors)
     }
   }
 
