@@ -52,15 +52,19 @@ export default class extends Phaser.State {
 
   death() {
     let x = this.hero.body.x, y = this.hero.body.y
-    this.hero.kill()
-    this.blood = new Death({
-      game: this.game,
-      x: x,
-      y: y,
-      asset: 'death'
-    })
-    this.game.add.existing(this.blood)
-    this.blood.animations.play('death')
+
+    if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
+      this.hero.kill()
+      this.blood = new Death({
+        game: this.game,
+        x: x,
+        y: y,
+        asset: 'death'
+      })
+      this.game.add.existing(this.blood)
+      this.blood.animations.play('death')
+    }
+    
   }
 
   render () {
