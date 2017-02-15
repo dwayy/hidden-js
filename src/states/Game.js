@@ -20,7 +20,8 @@ export default class extends Phaser.State {
       game: this.game,
       x: this.world.centerX,
       y: this.world.centerY,
-      asset: 'crosshair'
+      asset: 'crosshair',
+      // bullets: 1
     })
 
     let charactersGroup = this.game.add.group()
@@ -41,11 +42,18 @@ export default class extends Phaser.State {
     space.onDown.add(this.death, this)
 
     this.walk = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
+    this.run = this.game.input.keyboard.addKey(Phaser.Keyboard.Z)
   }
 
   update() {
-    if(this.hero.alive) {
-      this.hero.walk(this.walk)
+    if (this.hero.alive) {
+      if (this.walk.isDown) {
+        this.hero.forward(50)
+      } else if (this.run.isDown) {
+        this.hero.forward(150)
+      } else {
+        this.hero.forward(0)
+      }
     }
     this.crosshair.move(this.cursors)
   }
@@ -64,7 +72,7 @@ export default class extends Phaser.State {
       this.game.add.existing(this.blood)
       this.blood.animations.play('death')
     }
-    
+
   }
 
   render () {

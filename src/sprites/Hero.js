@@ -44,11 +44,11 @@ export default class extends Phaser.Sprite {
     }
   }
 
-  walk(input) {
+  forward(speed) {
     this.body.velocity.x = 0;
 
-    if (input.isDown) {
-      this.body.velocity.x = 150;
+    if (speed !== 0) {
+      this.body.velocity.x = speed;
       this.animations.play('right');
     }
     else {
