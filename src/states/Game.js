@@ -1,6 +1,6 @@
 /* globals __DEV__ */
 import Phaser from 'phaser'
-import Hero from '../sprites/Hero'
+import Character from '../sprites/Character'
 import Death from '../sprites/Death'
 import Crosshair from '../sprites/Crosshair'
 
@@ -9,7 +9,7 @@ export default class extends Phaser.State {
   preload () {}
 
   create () {
-    this.hero = new Hero({
+    this.character = new Character({
       game: this.game,
       x: this.world.centerX + 16 - this.world.width / 2,
       y: this.world.centerY,
@@ -20,17 +20,16 @@ export default class extends Phaser.State {
       game: this.game,
       x: this.world.centerX,
       y: this.world.centerY,
-      asset: 'crosshair',
-      // bullets: 1
+      asset: 'crosshair'
     })
 
     let charactersGroup = this.game.add.group()
     let crosshairsGroup = this.game.add.group()
 
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
-    this.game.add.existing(this.hero)
-    this.game.physics.arcade.enable(this.hero)
-    charactersGroup.add(this.hero)
+    this.game.add.existing(this.character)
+    this.game.physics.arcade.enable(this.character)
+    charactersGroup.add(this.character)
 
     this.game.add.existing(this.crosshair)
     this.game.physics.arcade.enable(this.crosshair)
@@ -46,23 +45,23 @@ export default class extends Phaser.State {
   }
 
   update() {
-    if (this.hero.alive) {
+    if (this.character.alive) {
       if (this.walk.isDown) {
-        this.hero.forward(50)
+        this.character.forward(50)
       } else if (this.run.isDown) {
-        this.hero.forward(150)
+        this.character.forward(150)
       } else {
-        this.hero.forward(0)
+        this.character.forward(0)
       }
     }
     this.crosshair.move(this.cursors)
   }
 
   death() {
-    let x = this.hero.body.x, y = this.hero.body.y
+    let x = this.character.body.x, y = this.character.body.y
 
     if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
-      this.hero.kill()
+      this.character.kill()
       this.blood = new Death({
         game: this.game,
         x: x,
@@ -77,7 +76,7 @@ export default class extends Phaser.State {
 
   render () {
     if (__DEV__) {
-      this.game.debug.spriteInfo(this.hero, 32, 32)
+      this.game.debug.spriteInfo(this.character, 32, 32)
     }
   }
 }
