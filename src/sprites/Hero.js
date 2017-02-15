@@ -6,6 +6,8 @@ export default class extends Phaser.Sprite {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
 
+    this.frame = 24
+
     this.animations.add('down', Array(8).fill().map((_, i) => i), 10, true);
     this.animations.add('up', Array(8).fill().map((_, i) => i + 8), 10, true);
     this.animations.add('left', Array(8).fill().map((_, i) => i + 16), 10, true);
@@ -39,6 +41,18 @@ export default class extends Phaser.Sprite {
     else {
       this.animations.stop();
       this.frame = this.currentFrame;
+    }
+  }
+
+  walk(input) {
+    this.body.velocity.x = 0;
+
+    if (input.isDown) {
+      this.body.velocity.x = 150;
+      this.animations.play('right');
+    }
+    else {
+      this.frame = 24
     }
   }
 

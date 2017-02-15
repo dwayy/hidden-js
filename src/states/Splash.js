@@ -10,9 +10,8 @@ export default class extends Phaser.State {
     centerGameObjects([this.loaderBg, this.loaderBar])
 
     this.load.setPreloadSprite(this.loaderBar)
-    //
-    // load your assets
-    //
+
+    this.load.image('crosshair', 'assets/images/crosshair.png')
     this.load.spritesheet('hero', 'assets/spritesheets/hero.png', 24, 32)
     this.load.spritesheet('death', 'assets/spritesheets/blood.png', 512, 512)
   }
