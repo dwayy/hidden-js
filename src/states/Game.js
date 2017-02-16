@@ -23,7 +23,7 @@ export default class extends Phaser.State {
       }
     })
 
-    this.character = this.characters[Math.floor(Math.random() * 11)]
+    this.character = this.characters[Math.floor(Math.random() * 10)]
     this.character.human = true
 
     this.crosshair = new Crosshair({
@@ -76,8 +76,12 @@ export default class extends Phaser.State {
     }
     this.crosshair.move(this.cursors)
 
-    this.characters.filter(c => !c.human && c.sprite.alive).forEach(c => c.sprite.forward(c.speed))
+    if (this.character.sprite.body.blocked.right) {
+      this.race.stop()
+      this.state.start('End', false)
+    }
 
+    this.characters.filter(c => !c.human && c.sprite.alive).forEach(c => c.sprite.forward(c.speed))
   }
 
   fire() {

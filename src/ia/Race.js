@@ -8,17 +8,24 @@ export default class {
   }
 
   start() {
-    this.timer = this.game.time.events.loop(Phaser.Timer.SECOND * 1, this.setSpeed, this)
+    this.timer = this.game.time.events
+    this.timer.loop(Phaser.Timer.SECOND * 1, this.setSpeed, this)
   }
 
   stop() {
     this.timer.destroy()
+    this.characters.filter(c => c.sprite.alive).forEach(c => {
+      c.speed = 0
+    })
   }
 
   setSpeed() {
     this.characters.filter(c => c.sprite.alive).forEach(c => {
       let i = Math.floor(Math.random() * 10)
       if (i < 2) {
+        c.speed = 50
+      }
+      else if (i < 6) {
         c.speed = 50
       }
       else {
