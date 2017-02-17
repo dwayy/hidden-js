@@ -8,8 +8,9 @@ export default class {
   }
 
   start() {
-    this.timer = this.game.time.events
+    this.timer = this.game.time.create()
     this.timer.loop(Phaser.Timer.SECOND * 1, this.setSpeed, this)
+    this.timer.start()
   }
 
   stop() {
