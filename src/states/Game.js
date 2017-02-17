@@ -76,19 +76,25 @@ export default class extends Phaser.State {
     }
     this.crosshair.move(this.cursors)
 
-    if (this.character.sprite.body.blocked.right) {
+    let aliveChars = this.characters.filter(c => c.sprite.alive)
+    let winner = undefined
+
+    if (aliveChars.some(c => {
+      winner = c.human
+      return c.sprite.body.blocked.right
+    })) {
       this.race.stop()
-      this.state.start('End', false)
+      this.state.start('End', false, false, winner)
     }
 
-    this.characters.filter(c => !c.human && c.sprite.alive).forEach(c => c.sprite.forward(c.speed))
+    aliveChars.filter(c => !c.human).forEach(c => c.sprite.forward(c.speed))
   }
 
   fire() {
-    this.characters.forEach(character => {
+    this.characters.filter(c => c.sprite.alive).forEach(character => {
       let x = character.sprite.body.x, y = character.sprite.body.y
 
-      if (character.sprite.alive && Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
+      if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
         character.sprite.kill()
         let blood = new Death({
           game: this.game,
