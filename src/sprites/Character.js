@@ -1,11 +1,14 @@
 import Phaser from 'phaser'
 
+const tints = Array(4).fill().map((_, i) => i === 0 ? 0xffffff : Math.random() * 0xffffff)
+
 export default class extends Phaser.Sprite {
 
   constructor ({ game, x, y, asset }) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
 
+    this.tint = tints[Math.floor(Math.random() * tints.length)]
     this.frame = 24
 
     this.animations.add('down', Array(8).fill().map((_, i) => i), 10, true)
