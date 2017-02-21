@@ -5,6 +5,16 @@ export default class extends Phaser.Sprite {
   constructor ({ game, x, y, asset }) {
     super(game, x, y, asset)
     this.anchor.setTo(0.5)
+    this.bullets = 5
+
+    let style = {
+          font: 'Bangers',
+          fill: '#ff0000',
+          fontSize: '6',
+        }
+
+    this.text = this.game.add.text(10, 10, this.bullets, style)
+    this.addChild(this.text)
   }
 
   move(cursors) {
@@ -22,6 +32,16 @@ export default class extends Phaser.Sprite {
     }
     else if (cursors.down.isDown) {
       this.body.velocity.y = 300;
+    }
+  }
+
+  shoot() {
+    if (this.bullets === 0) {
+      return false
+    }
+    else {
+      this.text.text = --this.bullets
+      return true
     }
   }
 

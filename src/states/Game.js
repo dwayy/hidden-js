@@ -91,22 +91,24 @@ export default class extends Phaser.State {
   }
 
   fire() {
-    this.characters.filter(c => c.sprite.alive).forEach(character => {
-      let x = character.sprite.body.x, y = character.sprite.body.y
+    if (this.crosshair.shoot()) {
+      this.characters.filter(c => c.sprite.alive).forEach(character => {
+        let x = character.sprite.body.x, y = character.sprite.body.y
 
-      if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
-        character.sprite.kill()
-        let blood = new Death({
-          game: this.game,
-          x: x,
-          y: y,
-          asset: 'death'
-        })
-        this.game.add.existing(blood)
-        blood.animations.play('death').killOnComplete = true
-      }
+        if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
+          character.sprite.kill()
+          let blood = new Death({
+            game: this.game,
+            x: x,
+            y: y,
+            asset: 'death'
+          })
+          this.game.add.existing(blood)
+          blood.animations.play('death').killOnComplete = true
+        }
 
-    })
+      })
+    }
   }
 
   render () {
