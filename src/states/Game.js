@@ -8,7 +8,7 @@ import Race from '../ia/Race'
 export default class extends Phaser.State {
   init (players) {
       console.log('Starting with ' + players + ' players')
-      this.players = players
+      this.players = Array(players).fill()
   }
   preload () {}
 
@@ -96,9 +96,9 @@ export default class extends Phaser.State {
   fire() {
     if (this.crosshair.shoot()) {
       this.characters.filter(c => c.sprite.alive).forEach(character => {
-        let x = character.sprite.body.x, y = character.sprite.body.y
+        let x = this.crosshair.body.x + 16, y = this.crosshair.body.y + 16
 
-        if (Phaser.Rectangle.contains(this.crosshair.getBounds(), x, y)) {
+        if (Phaser.Rectangle.contains(character.sprite.getBounds(), x, y)) {
           character.sprite.kill()
           let blood = new Death({
             game: this.game,
@@ -117,6 +117,8 @@ export default class extends Phaser.State {
   render () {
     if (__DEV__) {
       this.game.debug.spriteInfo(this.character.sprite, 32, 32)
+      this.game.debug.body(this.crosshair)
+      this.characters.forEach(c => this.game.debug.body(c.sprite))
     }
   }
 }
