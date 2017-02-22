@@ -6,7 +6,10 @@ import Crosshair from '../sprites/Crosshair'
 import Race from '../ia/Race'
 
 export default class extends Phaser.State {
-  init () {}
+  init (players) {
+      console.log('Starting with ' + players + ' players')
+      this.players = players
+  }
   preload () {}
 
   create () {

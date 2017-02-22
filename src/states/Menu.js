@@ -51,7 +51,8 @@ export default class extends Phaser.State {
   }
 
   start() {
-    this.state.start('Game')
+    // currentIndex + 2 is the number of players
+    this.state.start('Game', true, false, this.currentIndex + 2)
   }
 
 }
