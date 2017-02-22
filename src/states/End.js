@@ -18,11 +18,10 @@ export default class extends Phaser.State {
     banner.anchor.setTo(0.5)
 
     this.game.input.keyboard.addKey(Phaser.Keyboard.ENTER).onDown.add(this.restart, this)
-
   }
 
   restart() {
-    this.state.start('Game')
+    this.state.start('Menu')
   }
 
 }
