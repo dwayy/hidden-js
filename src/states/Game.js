@@ -29,6 +29,9 @@ export default class extends Phaser.State {
     this.character = this.characters[Math.floor(Math.random() * 10)]
     this.character.human = true
 
+    this.game.input.gamepad.start()
+    this.pad = this.game.input.gamepad.pad1
+
     this.crosshair = new Crosshair({
       game: this.game,
       x: this.world.centerX,
@@ -69,15 +72,26 @@ export default class extends Phaser.State {
 
   update() {
     if (this.character.sprite.alive) {
-      if (this.walk.isDown) {
+      if (this.walk.isDown || this.pad.isDown(Phaser.Gamepad.XBOX360_A)) {
         this.character.sprite.forward(50)
-      } else if (this.run.isDown) {
+      } else if (this.run.isDown || this.pad.isDown(Phaser.Gamepad.XBOX360_B)) {
         this.character.sprite.forward(150)
       } else {
         this.character.sprite.forward(0)
       }
     }
     this.crosshair.move(this.cursors)
+
+    let leftStickX = this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
+    let leftStickY = this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
+
+    if (leftStickX) {
+      this.crosshair.x += leftStickX * 5;
+    }
+
+    if (leftStickY) {
+      this.crosshair.y += leftStickY * 5;
+    }
 
     let aliveChars = this.characters.filter(c => c.sprite.alive)
     let winner = undefined
