@@ -22,7 +22,7 @@ export default class extends Phaser.State {
             asset: 'hero'
           }),
           speed: 0,
-          human: false
+          human: undefined
       }
     })
 
@@ -33,7 +33,7 @@ export default class extends Phaser.State {
 
     this.players = this.players.map((_, i) => {
       let player = this.characters[Math.floor(Math.random() * 10)]
-      player.human = true
+      player.human = i + 1
 
       //TODO: handle one pad / player
       switch (i) {
