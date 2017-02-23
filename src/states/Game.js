@@ -63,11 +63,18 @@ export default class extends Phaser.State {
     let space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     space.onDown.add(this.fire, this)
 
+    this.pad.addCallbacks(this, { onConnect: this.addButtons })
+
     this.walk = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
     this.run = this.game.input.keyboard.addKey(Phaser.Keyboard.Z)
 
     this.race = new Race(this.characters, this.game)
     this.race.start()
+  }
+
+  addButtons() {
+    this.pad.getButton(Phaser.Gamepad.XBOX360_LEFT_BUMPER).onDown.add(this.fire, this)
+    this.pad.getButton(Phaser.Gamepad.XBOX360_RIGHT_BUMPER).onDown.add(this.fire, this)
   }
 
   update() {
@@ -131,7 +138,7 @@ export default class extends Phaser.State {
   render () {
     if (__DEV__) {
       this.game.debug.spriteInfo(this.character.sprite, 32, 32)
-      this.game.debug.body(this.crosshair)
+      // this.game.debug.body(this.crosshair)
       this.characters.forEach(c => this.game.debug.body(c.sprite))
     }
   }
