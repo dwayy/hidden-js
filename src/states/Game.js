@@ -28,25 +28,38 @@ export default class extends Phaser.State {
 
     this.game.input.gamepad.start()
 
+    let charactersGroup = this.game.add.group()
+    let crosshairsGroup = this.game.add.group()
+
     this.players = this.players.map((_, i) => {
       let player = this.characters[Math.floor(Math.random() * 10)]
       player.human = true
+
       //TODO: handle one pad / player
-      player.pad = this.game.input.gamepad.pad1
+      switch (i) {
+        case 0:
+          player.pad = this.game.input.gamepad.pad1
+        break;
+        case 1:
+          player.pad = this.game.input.gamepad.pad2
+        break;
+      }
+
+      player.crosshair =  new Crosshair({
+        game: this.game,
+        x: this.world.centerX,
+        y: this.world.centerY,
+        asset: 'crosshair'
+      })
+
+      this.game.add.existing(player.crosshair)
+      this.game.physics.arcade.enable(player.crosshair)
+      crosshairsGroup.add(player.crosshair)
+
       return player;
     })
 
-    this.crosshair = new Crosshair({
-      game: this.game,
-      x: this.world.centerX,
-      y: this.world.centerY,
-      asset: 'crosshair'
-    })
-
     this.game.physics.startSystem(Phaser.Physics.ARCADE)
-
-    let charactersGroup = this.game.add.group()
-    let crosshairsGroup = this.game.add.group()
 
     this.characters.forEach(c => {
       this.game.add.existing(c.sprite)
@@ -55,16 +68,12 @@ export default class extends Phaser.State {
       charactersGroup.add(c.sprite)
     })
 
-    this.game.add.existing(this.crosshair)
-    this.game.physics.arcade.enable(this.crosshair)
-    crosshairsGroup.add(this.crosshair)
-
     this.cursors = this.input.keyboard.createCursorKeys()
 
     let space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     space.onDown.add(this.fire, this)
 
-    this.players[0].pad.addCallbacks(this, { onConnect: this.addButtons })
+    this.players.forEach(p => p.pad.addCallbacks(this, { onConnect: this.addButtons.bind(this, p) }))
 
     this.walk = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
     this.run = this.game.input.keyboard.addKey(Phaser.Keyboard.Z)
@@ -73,33 +82,36 @@ export default class extends Phaser.State {
     this.race.start()
   }
 
-  addButtons() {
-    this.players[0].pad.getButton(Phaser.Gamepad.XBOX360_LEFT_BUMPER).onDown.add(this.fire, this)
-    this.players[0].pad.getButton(Phaser.Gamepad.XBOX360_RIGHT_BUMPER).onDown.add(this.fire, this)
+  addButtons(player) {
+    player.pad.getButton(Phaser.Gamepad.XBOX360_LEFT_BUMPER).onDown.add(this.fire.bind(this, player), this)
+    player.pad.getButton(Phaser.Gamepad.XBOX360_RIGHT_BUMPER).onDown.add(this.fire.bind(this, player), this)
   }
 
   update() {
-    if (this.players[0].sprite.alive) {
-      if (this.walk.isDown || this.players[0].pad.isDown(Phaser.Gamepad.XBOX360_A)) {
-        this.players[0].sprite.forward(50)
-      } else if (this.run.isDown || this.players[0].pad.isDown(Phaser.Gamepad.XBOX360_B)) {
-        this.players[0].sprite.forward(150)
-      } else {
-        this.players[0].sprite.forward(0)
+    this.players.forEach(p => {
+      if (p.sprite.alive) {
+        if (this.walk.isDown || p.pad.isDown(Phaser.Gamepad.XBOX360_A)) {
+          p.sprite.forward(50)
+        } else if (this.run.isDown || p.pad.isDown(Phaser.Gamepad.XBOX360_B)) {
+          p.sprite.forward(150)
+        } else {
+          p.sprite.forward(0)
+        }
       }
-    }
-    this.crosshair.move(this.cursors)
 
-    let leftStickX = this.players[0].pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
-    let leftStickY = this.players[0].pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
+      let leftStickX = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
+      let leftStickY = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
 
-    if (leftStickX) {
-      this.crosshair.x += leftStickX * 5;
-    }
+      if (leftStickX) {
+        p.crosshair.x += leftStickX * 5;
+      }
 
-    if (leftStickY) {
-      this.crosshair.y += leftStickY * 5;
-    }
+      if (leftStickY) {
+        p.crosshair.y += leftStickY * 5;
+      }
+    })
+
+    this.players[0].crosshair.move(this.cursors)
 
     let aliveChars = this.characters.filter(c => c.sprite.alive)
     let winner = undefined
@@ -115,10 +127,10 @@ export default class extends Phaser.State {
     aliveChars.filter(c => !c.human).forEach(c => c.sprite.forward(c.speed))
   }
 
-  fire() {
-    if (this.crosshair.shoot()) {
+  fire(player) {
+    if (player.crosshair.shoot()) {
       this.characters.filter(c => c.sprite.alive).forEach(character => {
-        let x = this.crosshair.body.x + 16, y = this.crosshair.body.y + 16
+        let x = this.players[0].crosshair.body.x + 16, y = this.players[0].crosshair.body.y + 16
 
         if (Phaser.Rectangle.contains(character.sprite.getBounds(), x, y)) {
           character.sprite.kill()
@@ -131,7 +143,6 @@ export default class extends Phaser.State {
           this.game.add.existing(blood)
           blood.animations.play('death').killOnComplete = true
         }
-
       })
     }
   }
@@ -139,7 +150,6 @@ export default class extends Phaser.State {
   render () {
     if (__DEV__) {
       this.game.debug.spriteInfo(this.players[0].sprite, 32, 32)
-      // this.game.debug.body(this.crosshair)
       this.characters.forEach(c => this.game.debug.body(c.sprite))
     }
   }
