@@ -26,11 +26,15 @@ export default class extends Phaser.State {
       }
     })
 
-    this.character = this.characters[Math.floor(Math.random() * 10)]
-    this.character.human = true
-
     this.game.input.gamepad.start()
-    this.pad = this.game.input.gamepad.pad1
+
+    this.players = this.players.map((_, i) => {
+      let player = this.characters[Math.floor(Math.random() * 10)]
+      player.human = true
+      //TODO: handle one pad / player
+      player.pad = this.game.input.gamepad.pad1
+      return player;
+    })
 
     this.crosshair = new Crosshair({
       game: this.game,
@@ -38,6 +42,8 @@ export default class extends Phaser.State {
       y: this.world.centerY,
       asset: 'crosshair'
     })
+
+    this.game.physics.startSystem(Phaser.Physics.ARCADE)
 
     let charactersGroup = this.game.add.group()
     let crosshairsGroup = this.game.add.group()
@@ -49,11 +55,6 @@ export default class extends Phaser.State {
       charactersGroup.add(c.sprite)
     })
 
-    this.game.physics.startSystem(Phaser.Physics.ARCADE)
-    this.game.add.existing(this.character.sprite)
-    this.game.physics.arcade.enable(this.character.sprite)
-    charactersGroup.add(this.character.sprite)
-
     this.game.add.existing(this.crosshair)
     this.game.physics.arcade.enable(this.crosshair)
     crosshairsGroup.add(this.crosshair)
@@ -63,7 +64,7 @@ export default class extends Phaser.State {
     let space = this.game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR)
     space.onDown.add(this.fire, this)
 
-    this.pad.addCallbacks(this, { onConnect: this.addButtons })
+    this.players[0].pad.addCallbacks(this, { onConnect: this.addButtons })
 
     this.walk = this.game.input.keyboard.addKey(Phaser.Keyboard.A)
     this.run = this.game.input.keyboard.addKey(Phaser.Keyboard.Z)
@@ -73,24 +74,24 @@ export default class extends Phaser.State {
   }
 
   addButtons() {
-    this.pad.getButton(Phaser.Gamepad.XBOX360_LEFT_BUMPER).onDown.add(this.fire, this)
-    this.pad.getButton(Phaser.Gamepad.XBOX360_RIGHT_BUMPER).onDown.add(this.fire, this)
+    this.players[0].pad.getButton(Phaser.Gamepad.XBOX360_LEFT_BUMPER).onDown.add(this.fire, this)
+    this.players[0].pad.getButton(Phaser.Gamepad.XBOX360_RIGHT_BUMPER).onDown.add(this.fire, this)
   }
 
   update() {
-    if (this.character.sprite.alive) {
-      if (this.walk.isDown || this.pad.isDown(Phaser.Gamepad.XBOX360_A)) {
-        this.character.sprite.forward(50)
-      } else if (this.run.isDown || this.pad.isDown(Phaser.Gamepad.XBOX360_B)) {
-        this.character.sprite.forward(150)
+    if (this.players[0].sprite.alive) {
+      if (this.walk.isDown || this.players[0].pad.isDown(Phaser.Gamepad.XBOX360_A)) {
+        this.players[0].sprite.forward(50)
+      } else if (this.run.isDown || this.players[0].pad.isDown(Phaser.Gamepad.XBOX360_B)) {
+        this.players[0].sprite.forward(150)
       } else {
-        this.character.sprite.forward(0)
+        this.players[0].sprite.forward(0)
       }
     }
     this.crosshair.move(this.cursors)
 
-    let leftStickX = this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
-    let leftStickY = this.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
+    let leftStickX = this.players[0].pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
+    let leftStickY = this.players[0].pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
 
     if (leftStickX) {
       this.crosshair.x += leftStickX * 5;
@@ -137,7 +138,7 @@ export default class extends Phaser.State {
 
   render () {
     if (__DEV__) {
-      this.game.debug.spriteInfo(this.character.sprite, 32, 32)
+      this.game.debug.spriteInfo(this.players[0].sprite, 32, 32)
       // this.game.debug.body(this.crosshair)
       this.characters.forEach(c => this.game.debug.body(c.sprite))
     }
