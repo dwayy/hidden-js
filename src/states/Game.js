@@ -130,7 +130,7 @@ export default class extends Phaser.State {
   fire(player) {
     if (player.crosshair.shoot()) {
       this.characters.filter(c => c.sprite.alive).forEach(character => {
-        let x = this.players[0].crosshair.body.x + 16, y = this.players[0].crosshair.body.y + 16
+        let x = player.crosshair.body.x + 16, y = player.crosshair.body.y + 16
 
         if (Phaser.Rectangle.contains(character.sprite.getBounds(), x, y)) {
           character.sprite.kill()
