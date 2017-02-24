@@ -16,7 +16,6 @@ export default class extends Phaser.Sprite {
     this.tint = Math.random() * 0xffffff
 
     this.text = this.game.add.text(10, 10, this.bullets, style)
-    this.text.tint = this.tint
     this.addChild(this.text)
   }
 
