@@ -97,17 +97,17 @@ export default class extends Phaser.State {
         } else {
           p.sprite.forward(0)
         }
-      }
 
-      let leftStickX = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
-      let leftStickY = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
+        let leftStickX = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_X);
+        let leftStickY = p.pad.axis(Phaser.Gamepad.XBOX360_STICK_LEFT_Y);
 
-      if (leftStickX) {
-        p.crosshair.x += leftStickX * 5;
-      }
+        if (leftStickX) {
+          p.crosshair.x += leftStickX * 5;
+        }
 
-      if (leftStickY) {
-        p.crosshair.y += leftStickY * 5;
+        if (leftStickY) {
+          p.crosshair.y += leftStickY * 5;
+        }
       }
     })
 
